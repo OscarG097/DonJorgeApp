@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.DonJorge" parent="Theme.MaterialComponents.DayNight.NoActionBar"/>
+
+    <style name="BotonIngreso" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/colorIngreso</item>
+    </style>
+
+    <style name="TileTextSimple">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:alpha">0.6</item>
+    </style>
+
+</resources>

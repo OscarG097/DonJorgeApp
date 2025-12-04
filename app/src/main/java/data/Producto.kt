@@ -1,0 +1,22 @@
+package com.bebidas.donjorge.data
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "productos")
+data class Producto(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    val nombre: String,
+
+    val costoCompra: Double,
+
+    val precioVenta: Double,
+
+    val stock: Int,
+
+    val rutaImagenLocal: String? = null,
+
+    val gananciaUnidad: Double = precioVenta - costoCompra
+)

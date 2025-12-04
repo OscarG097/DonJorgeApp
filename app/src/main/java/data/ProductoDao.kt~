@@ -1,0 +1,28 @@
+package com.bebidas.donjorge.data // Asegúrate de que este sea tu paquete de datos
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * Interfaz Data Access Object (DAO) para la Entidad Producto.
+ * Define las funciones para interactuar con la tabla 'productos'.
+ */
+@Dao
+interface ProductoDao {
+
+    // 🟢 Función para insertar un nuevo producto en la base de datos.
+    @Insert
+    suspend fun insertarProducto(producto: Producto)
+
+    // Función para obtener todos los productos (se usará en el listado y para los desplegables)
+    // El 'Flow' de coroutines permite que la UI se actualice automáticamente cuando cambian los datos.
+    @Query("SELECT * FROM productos ORDER BY nombre ASC")
+    fun obtenerTodosProductos(): Flow<List<Producto>>
+
+    // Función para actualizar un producto existente (ej: actualizar stock)
+    @Update
+    suspend fun actualizarProducto(producto: Producto)
+}

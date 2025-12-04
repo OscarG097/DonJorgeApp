@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="products_array">
+        <item>Coca-Cola 1.75Lts</item>
+        <item>Coca-Cola 2.25Lts</item>
+        <item>Botella Mananos</item>
+        <item>Botella Smirnoff saborizado</item>
+        <item>Botella Smirnoff</item>
+        <item>Lata cerveza Quilmes</item>
+        <item>Lata cerveza Brahma</item>
+        <item>Lata cerveza Budweiser</item>
+        <item>Lata cerveza Heineken 710ml</item>
+        <item>Lata Smirnoff</item>
+        <item>Botella de agua</item>
+
+
+        <item>Otros</item>
+    </string-array>
+
+    <string-array name="categories_array">
+        <item>Sin Alcohol</item>
+        <item>Con Alcohol</item>
+        <item>Energizante</item>
+        <item>Otros</item>
+    </string-array>
+</resources>
