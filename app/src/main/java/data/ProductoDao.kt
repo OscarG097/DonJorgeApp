@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 interface ProductoDao {
 
     @Insert
-    suspend fun insertarProducto(producto: Producto)
+    suspend fun insertProduct(product: Producto)
 
-    @Query("SELECT * FROM productos ORDER BY nombre ASC")
-    fun obtenerTodosProductos(): Flow<List<Producto>>
+    @Query("SELECT * FROM productos ORDER BY name ASC")
+    fun listAllProduct(): Flow<List<Producto>>
 
     @Update
-    suspend fun actualizarProducto(producto: Producto)
+    suspend fun updateProduct(product: Producto)
 }

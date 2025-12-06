@@ -8,15 +8,15 @@ data class Producto(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val nombre: String,
+    val name: String,
 
-    val costoCompra: Double,
+    val costPurchase: Double,
 
-    val precioVenta: Double,
+    val priceSale: Double,
 
     val stock: Int,
 
-    val rutaImagenLocal: String? = null,
+    val localImageRoute: String? = null,
 
-    val gananciaUnidad: Double = precioVenta - costoCompra
+    val gananciaUnidad: Double = priceSale - costPurchase
 )
