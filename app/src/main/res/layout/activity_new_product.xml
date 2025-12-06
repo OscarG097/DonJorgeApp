@@ -43,11 +43,11 @@
             android:contentDescription="Imagen del producto base"
             android:src="@drawable/default_placeholder" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Categoría (Alcohol / Sin Alcohol)"
-            android:textStyle="bold"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Categoría (Alcohol / Sin Alcohol)"-->
+<!--            android:textStyle="bold"/>-->
 <!--        <Spinner-->
 <!--            android:id="@+id/spinner_categoria"-->
 <!--            android:layout_width="match_parent"-->
