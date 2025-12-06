@@ -26,25 +26,35 @@
             android:text="Producto"
             android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/spinner_producto_base"
+            android:id="@+id/spinner_product_base"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/products_array"
             android:minHeight="48dp"
             android:layout_marginBottom="16dp"/>
 
+        <ImageView
+            android:id="@+id/iv_product_imagen"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="Imagen del producto base"
+            android:src="@drawable/default_placeholder" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Categoría (Alcohol / Sin Alcohol)"
             android:textStyle="bold"/>
-        <Spinner
-            android:id="@+id/spinner_categoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/categories_array"
-            android:minHeight="48dp"
-            android:layout_marginBottom="16dp"/>
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner_categoria"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:entries="@array/categories_array"-->
+<!--            android:minHeight="48dp"-->
+<!--            android:layout_marginBottom="16dp"/>-->
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -66,7 +76,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_costo_compra"
+                android:id="@+id/et_cost_purchase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"/>
@@ -79,14 +89,14 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="16dp">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_precio_venta"
+                android:id="@+id/et_price_sale"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/btn_guardar_producto"
+            android:id="@+id/btn_save_product"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Agregar Producto"
