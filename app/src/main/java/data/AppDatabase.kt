@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 import com.bebidas.donjorge.data.Producto
 import com.bebidas.donjorge.data.ProductoDao
 
-@Database(entities = [Producto::class], version = 1, exportSchema = false)
+@Database(entities = [Producto::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
@@ -23,7 +23,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "control_bebidas_db"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

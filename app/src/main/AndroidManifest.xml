@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DonJorge">
         <activity
-            android:name=".NewProduct"
-            android:label="Nuevo Producto"
-            android:theme="@style/Theme.DonJorge"
+            android:name=".ListProductsActivity"
             android:exported="false" />
+        <activity
+            android:name=".NewProduct"
+            android:exported="false"
+            android:label="Nuevo Producto"
+            android:theme="@style/Theme.DonJorge" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
