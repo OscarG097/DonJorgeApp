@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             else -> "Pantalla en Desarrollo"
         }
 
-        // 🟢 Solo se muestra el Toast para las funciones AÚN NO IMPLEMENTADAS.
+        // Solo se muestra el Toast para las funciones AÚN NO IMPLEMENTADAS.
         Toast.makeText(
             this,
             "¡Mosaico presionado! Navegando a: $nextActivityTitle",
