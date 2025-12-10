@@ -19,7 +19,7 @@ class ListProductsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_products)
 
-        // 1. Inicializar BD y RecyclerView
+        // Inicializar BD y RecyclerView
         db = AppDatabase.getDatabase(applicationContext)
         recyclerView = findViewById(R.id.rv_productos)
 
@@ -28,10 +28,10 @@ class ListProductsActivity : AppCompatActivity() {
         recyclerView.adapter = productoAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        observeProductos()
+        observeProducts()
     }
 
-    private fun observeProductos() {
+    private fun observeProducts() {
         lifecycleScope.launch {
             db.productoDao().listAllProduct().collect { listProducts ->
                 productoAdapter.actualizarLista(listProducts)
