@@ -10,6 +10,8 @@ data class Producto(
 
     val name: String,
 
+    val category: String = "No Asignada",
+
     val costPurchase: Double,
 
     val priceSale: Double,
@@ -18,5 +20,7 @@ data class Producto(
 
     val localImageRoute: String? = null,
 
-    val gananciaUnidad: Double = priceSale - costPurchase
+    val gananciaUnidad: Double = priceSale - costPurchase,
+
+    val isCombo: Boolean = false
 )
