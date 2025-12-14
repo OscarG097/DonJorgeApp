@@ -1,32 +1,56 @@
 package com.bebidas.donjorge
 
+import android.annotation.SuppressLint
+import android.view.View
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bebidas.donjorge.data.AppDatabase
+import com.bebidas.donjorge.data.ComboDetail
 import com.bebidas.donjorge.data.Producto
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.widget.ImageView
-import android.view.View
-import android.widget.AdapterView
 
 class NewProduct : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
+
+    // Vistas de Producto Normal existentes
     private lateinit var spinnerProductBase: Spinner
-//    private lateinit var spinnerCategoria: Spinner
     private lateinit var etStock: TextInputEditText
     private lateinit var etCostPurchase: TextInputEditText
     private lateinit var etPriceSale: TextInputEditText
     private lateinit var btnSave: Button
     private lateinit var ivImageProduct: ImageView
+
+    // 🟢 Vistas de Combo
+    private lateinit var switchEsCombo: Switch
+    private lateinit var llNormalProductInputs: LinearLayout
+    private lateinit var llComboComponentsContainer: LinearLayout
+    private lateinit var btnAddComponent: Button
+    private lateinit var spinnerComboImageBase: Spinner
+    private lateinit var llComboInputs: LinearLayout
+    private lateinit var ivComboImage: ImageView
+    private lateinit var etComboName: TextInputEditText
+    private lateinit var tilComboName: TextInputLayout
+    private lateinit var llComboCreationInputs: LinearLayout
+    private lateinit var allIndividualProducts: List<Producto>
+    private val componentViews = mutableListOf<View>()
 
     private val productoImagenMap = mapOf(
         "Seleccione un Producto Base" to R.drawable.default_placeholder,
@@ -40,9 +64,21 @@ class NewProduct : AppCompatActivity() {
         "Lata cerveza Budweiser" to R.drawable.lata_budweiser,
         "Lata cerveza Heineken 710ml" to R.drawable.lata_heineken710,
         "Lata Smirnoff" to R.drawable.lata_smir,
-        "Botella de agua" to R.drawable.botella_agua
+        "Botella de agua" to R.drawable.botella_agua,
+
+        "Seleccionar Imagen del Combo" to R.drawable.default_placeholder,
+        "Combo Fernet+Coca" to R.drawable.combo_fernet_coca,
+        "Combo 1882+Coca" to R.drawable.combo_1882_coca,
+        "Combo Gancia+Sprite" to R.drawable.combo_gancia_sprite,
+        "Combo Vodka+Jugo" to R.drawable.combo_smir_jugo,
+        "Combo Vodka+Speed" to R.drawable.combo_smir_speed,
+        "Combo Campari+Jugo" to R.drawable.combo_campari_jugo,
+        "Combo Cosecha+Speed" to R.drawable.combo_cocecha_speed,
+        "Combo Gordons+Tonica" to R.drawable.combo_gordons_tonica,
+        "Combo Balbo+Manaos" to R.drawable.combo_balbo_manaos
     )
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_product)
@@ -50,24 +86,39 @@ class NewProduct : AppCompatActivity() {
         db = AppDatabase.getDatabase(applicationContext)
 
         spinnerProductBase = findViewById(R.id.spinner_product_base)
-//        spinnerCategoria = findViewById(R.id.spinner_categoria)
         etStock = findViewById(R.id.et_stock)
         etCostPurchase = findViewById(R.id.et_cost_purchase)
         etPriceSale = findViewById(R.id.et_price_sale)
         btnSave = findViewById(R.id.btn_save_product)
         ivImageProduct = findViewById(R.id.iv_product_imagen)
 
+        tilComboName = findViewById(R.id.til_combo_name)
+        etComboName = findViewById(R.id.et_combo_name)
+        switchEsCombo = findViewById(R.id.switch_es_combo)
+        ivComboImage = findViewById(R.id.iv_combo_imagen)
+        llNormalProductInputs = findViewById(R.id.ll_normal_inputs)
+        llComboCreationInputs = findViewById(R.id.ll_combo_creation_inputs)
+        llComboComponentsContainer = findViewById(R.id.ll_combo_components_container)
+        btnAddComponent = findViewById(R.id.btn_add_component)
+        llComboInputs = findViewById(R.id.ll_combo_inputs)
+        spinnerComboImageBase = findViewById(R.id.spinner_combo_image_base)
+
+
+
         setupSpinners()
+        setupInputWatchers()
+        setupComboLogic()
 
         btnSave.setOnClickListener {
             saveProduct()
         }
+    }
+
+    private fun setupInputWatchers() {
         etCostPurchase.addTextChangedListener(CurrencyTextWatcher(etCostPurchase))
         etPriceSale.addTextChangedListener(CurrencyTextWatcher(etPriceSale))
-
-//        etCostoCompra.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-//        etPrecioVenta.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
     }
+
 
     private fun setupSpinners() {
         ArrayAdapter.createFromResource(
@@ -79,62 +130,164 @@ class NewProduct : AppCompatActivity() {
             spinnerProductBase.adapter = adapter
         }
 
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.combo_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerComboImageBase.adapter = adapter
+        }
+
         spinnerProductBase.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedProduct = parent.getItemAtPosition(position).toString()
-                mostrarImagenSeleccionada(selectedProduct)
+                if (!switchEsCombo.isChecked) {
+                    val selectedProduct = parent.getItemAtPosition(position).toString()
+                    mostrarImagenSeleccionada(selectedProduct, isCombo = false)
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // No hace nada si no se selecciona nada
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
-//
-//        ArrayAdapter.createFromResource(
-//            this,
-//            R.array.categories_array,
-//            android.R.layout.simple_spinner_item
-//        ).also { adapter ->
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//            spinnerCategoria.adapter = adapter
-//        }
+
+        spinnerComboImageBase.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (switchEsCombo.isChecked) {
+                    val selectedComboImage = parent.getItemAtPosition(position).toString()
+                    mostrarImagenSeleccionada(selectedComboImage, isCombo = true)
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
-    private fun mostrarImagenSeleccionada(nameProduct: String) {
+    private fun mostrarImagenSeleccionada(nameProduct: String, isCombo: Boolean) {
         val drawableId = productoImagenMap[nameProduct] ?: R.drawable.default_placeholder
 
-        ivImageProduct.setImageResource(drawableId)
+        if (isCombo) {
+            ivComboImage.setImageResource(drawableId)
+        } else {
+            ivImageProduct.setImageResource(drawableId)
+        }
     }
 
     private fun getDoubleFromCurrencyInput(inputStr: String): Double? {
         val cleanedString = inputStr.filter { it.isDigit() }
-
         if (cleanedString.isEmpty()) return null
-
         return cleanedString.toDouble() / 100.0
     }
-    private fun saveProduct() {
-        val name = spinnerProductBase.selectedItem.toString()
 
-        if (name.contains("Seleccione un Producto Base", ignoreCase = true)) {
-            Toast.makeText(this, "Debe seleccionar un producto base.", Toast.LENGTH_SHORT).show()
+    private fun setupComboLogic() {
+        lifecycleScope.launch {
+            val allProductsFlow = db.productoDao().listAllProduct().firstOrNull() ?: emptyList()
+
+            allIndividualProducts = allProductsFlow.filter { !it.isCombo }
+
+            if (switchEsCombo.isChecked && componentViews.isEmpty()) {
+                addComponentRow()
+            }
+        }
+
+        switchEsCombo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                llNormalProductInputs.visibility = View.GONE
+                llComboInputs.visibility = View.VISIBLE
+                llComboCreationInputs.visibility = View.VISIBLE
+
+                val selectedComboImage = spinnerComboImageBase.selectedItem.toString()
+                mostrarImagenSeleccionada(selectedComboImage, isCombo = true)
+
+                if (componentViews.isEmpty()) {
+                    addComponentRow()
+                }
+            } else {
+                llNormalProductInputs.visibility = View.VISIBLE
+                llComboInputs.visibility = View.GONE
+                llComboCreationInputs.visibility = View.GONE
+
+                val selectedProduct = spinnerProductBase.selectedItem.toString()
+                mostrarImagenSeleccionada(selectedProduct, isCombo = false)
+            }
+            etStock.setText("")
+            etCostPurchase.setText("")
+        }
+
+        btnAddComponent.setOnClickListener {
+            addComponentRow()
+        }
+    }
+
+    private fun addComponentRow() {
+        if (!::allIndividualProducts.isInitialized || allIndividualProducts.isEmpty()) {
+            Toast.makeText(this, "Cargando productos.", Toast.LENGTH_SHORT).show()
             return
         }
 
+        val componentView = LayoutInflater.from(this).inflate(R.layout.item_combo_component, llComboComponentsContainer, false)
+
+        val spinner = componentView.findViewById<Spinner>(R.id.spinner_combo_product)
+        val etQuantity = componentView.findViewById<EditText>(R.id.et_combo_quantity)
+        val btnRemove = componentView.findViewById<ImageButton>(R.id.btn_remove_component)
+
+        val productNames = allIndividualProducts.map { it.name }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, productNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        btnRemove.setOnClickListener {
+            llComboComponentsContainer.removeView(componentView)
+            componentViews.remove(componentView)
+            if (switchEsCombo.isChecked && componentViews.isEmpty()) {
+                addComponentRow()
+            }
+        }
+
+        llComboComponentsContainer.addView(componentView)
+        componentViews.add(componentView)
+        etQuantity.requestFocus()
+    }
+
+    private fun saveProduct() {
+        val isComboMode = switchEsCombo.isChecked
+        val priceSaleStr = etPriceSale.text.toString()
+        val priceSale = getDoubleFromCurrencyInput(priceSaleStr)
+
+        val name: String = if (isComboMode) {
+            etComboName.text.toString().trim()
+        } else {
+            spinnerProductBase.selectedItem.toString()
+        }
+
+        if (name.isEmpty() || (!isComboMode && name.contains("Seleccione un Producto Base", ignoreCase = true))) {
+            Toast.makeText(this, "Debe ingresar un nombre válido.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (priceSale == null || priceSale <= 0) {
+            Toast.makeText(this, "El precio de venta debe ser un número válido mayor a cero.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (isComboMode) {
+            saveCombo(name, priceSale)
+        } else {
+            saveNormalProduct(name, priceSale)
+        }
+    }
+
+    private fun saveNormalProduct(name: String, priceSale: Double) {
         val stockStr = etStock.text.toString()
         val costoStr = etCostPurchase.text.toString()
-        val ventaStr = etPriceSale.text.toString()
 
-        if (stockStr.isEmpty() || costoStr.isEmpty() || ventaStr.isEmpty()) {
-            Toast.makeText(this, "Debe completar todos los campos.", Toast.LENGTH_SHORT).show()
+        if (stockStr.isEmpty() || costoStr.isEmpty()) {
+            Toast.makeText(this, "Debe completar Stock y Costo para un producto normal.", Toast.LENGTH_SHORT).show()
             return
         }
 
         val stock = stockStr.toIntOrNull()
         val costPurchase = getDoubleFromCurrencyInput(costoStr)
-        val priceSale = getDoubleFromCurrencyInput(ventaStr)
 
-        if (stock == null || stock < 0 || costPurchase == null || costPurchase <= 0 || priceSale == null || priceSale <= 0) {
-            Toast.makeText(this, "Stock y precios deben ser números válidos y mayores a cero.", Toast.LENGTH_LONG).show()
+        if (stock == null || stock < 0 || costPurchase == null || costPurchase <= 0) {
+            Toast.makeText(this, "Stock y costos deben ser números válidos y mayores a cero.", Toast.LENGTH_LONG).show()
             return
         }
 
@@ -142,7 +295,8 @@ class NewProduct : AppCompatActivity() {
             name = name,
             stock = stock,
             costPurchase = costPurchase,
-            priceSale = priceSale
+            priceSale = priceSale,
+            isCombo = false
         )
 
         lifecycleScope.launch {
@@ -150,8 +304,67 @@ class NewProduct : AppCompatActivity() {
                 db.productoDao().insertProduct(newProduct)
             }
             Toast.makeText(this@NewProduct, "¡Producto '$name' guardado con éxito!", Toast.LENGTH_LONG).show()
-
             finish()
+        }
+    }
+
+    private fun saveCombo(comboName: String, priceSale: Double) {
+        val recipe = mutableListOf<Pair<Int, Int>>()
+
+        if (componentViews.isEmpty()) {
+            Toast.makeText(this, "Debe agregar al menos un componente al combo.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val selectedImageKey = spinnerComboImageBase.selectedItem.toString()
+        for (view in componentViews) {
+            val spinner = view.findViewById<Spinner>(R.id.spinner_combo_product)
+            val etQuantity = view.findViewById<EditText>(R.id.et_combo_quantity)
+
+            val selectedProductName = spinner.selectedItem?.toString() ?: ""
+            val quantity = etQuantity.text.toString().toIntOrNull()
+
+            if (selectedProductName.contains("Seleccione un Producto", ignoreCase = true) || quantity == null || quantity <= 0) {
+                Toast.makeText(this, "Componente no válido: Seleccione producto y cantidad mayor a cero.", Toast.LENGTH_LONG).show()
+                return
+            }
+
+            val productId = allIndividualProducts.find { it.name == selectedProductName }?.id
+
+            if (productId == null) {
+                Toast.makeText(this, "Error: No se encontró el ID del producto componente.", Toast.LENGTH_LONG).show()
+                return
+            }
+            recipe.add(Pair(productId, quantity))
+        }
+
+        lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    val comboItem = Producto(
+                        name = comboName,
+                        stock = 0,
+                        costPurchase = 0.0,
+                        priceSale = priceSale,
+                        isCombo = true,
+                        localImageRoute = selectedImageKey
+                    )
+                    val comboId = db.productoDao().insertProduct(comboItem)
+
+                    recipe.forEach { (productId, quantity) ->
+                        val comboDetail = ComboDetail(
+                            comboId = comboId.toInt(),
+                            individualProductId = productId,
+                            componentQuantity = quantity
+                        )
+                        db.comboDetailDao().insertComboDetail(comboDetail)
+                    }
+                }
+                Toast.makeText(this@NewProduct, "¡Combo '$comboName' y receta guardados con éxito!", Toast.LENGTH_LONG).show()
+                finish()
+
+            } catch (e: Exception) {
+                Toast.makeText(this@NewProduct, "Error al guardar el combo: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

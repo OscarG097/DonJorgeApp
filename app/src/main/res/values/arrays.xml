@@ -16,6 +16,20 @@
         <item>Botella de agua</item>
     </string-array>
 
+    <string-array name="combo_array">
+        <item>Seleccionar Imagen del Combo</item>
+        <item>Combo Fernet+Coca</item>
+        <item>Combo 1882+Coca</item>
+        <item>Combo Gancia+Sprite</item>
+        <item>Combo Vodka+Jugo</item>
+        <item>Combo Vodka+Speed</item>
+        <item>Combo Campari+Jugo</item>
+        <item>Combo Cosecha+Speed</item>
+        <item>Combo Gordons+Tonica</item>
+        <item>Combo Balbo+Manaos</item>
+
+
+    </string-array>
 <!--    <string-array name="categories_array">-->
 <!--        <item>Sin Alcohol</item>-->
 <!--        <item>Con Alcohol</item>-->

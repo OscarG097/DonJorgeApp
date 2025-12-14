@@ -1,5 +1,7 @@
 package com.bebidas.donjorge
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,27 +9,50 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bebidas.donjorge.data.AppDatabase
 import com.bebidas.donjorge.data.Producto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
 
 class ProductAdapter(
-    private var productos: List<Producto>
+    private var productos: List<Producto>,
+    private val context: Context
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
-        private val productoImagenMap = mapOf(
-            "Coca-Cola 1.75Lts" to R.drawable.coca,
-            "Coca-Cola 2.25Lts" to R.drawable.coca,
-            "Botella Mananos" to R.drawable.manaos,
-            "Botella Smirnoff saborizado" to R.drawable.botella_smir_sab,
-            "Botella Smirnoff" to R.drawable.botella_smirnoff,
-            "Lata cerveza Quilmes" to R.drawable.lata_quilmes,
-            "Lata cerveza Brahma" to R.drawable.lata_brahma,
-            "Lata cerveza Budweiser" to R.drawable.lata_budweiser,
-            "Lata cerveza Heineken 710ml" to R.drawable.lata_heineken710,
-            "Lata Smirnoff" to R.drawable.lata_smir,
-            "Botella de agua" to R.drawable.botella_agua,
-        )
+    // Instancia de la BD (Mejor aquí que dentro del ViewHolder)
+    private val db = AppDatabase.getDatabase(context)
+
+    private val productoImagenMap = mapOf(
+        "Seleccione un Producto Base" to R.drawable.default_placeholder,
+        "Coca-Cola 1.75Lts" to R.drawable.coca,
+        "Coca-Cola 2.25Lts" to R.drawable.coca,
+        "Botella Mananos" to R.drawable.manaos,
+        "Botella Smirnoff saborizado" to R.drawable.botella_smir_sab,
+        "Botella Smirnoff" to R.drawable.botella_smirnoff,
+        "Lata cerveza Quilmes" to R.drawable.lata_quilmes,
+        "Lata cerveza Brahma" to R.drawable.lata_brahma,
+        "Lata cerveza Budweiser" to R.drawable.lata_budweiser,
+        "Lata cerveza Heineken 710ml" to R.drawable.lata_heineken710,
+        "Lata Smirnoff" to R.drawable.lata_smir,
+        "Botella de agua" to R.drawable.botella_agua,
+
+        "Seleccionar Imagen del Combo" to R.drawable.default_placeholder,
+        "Combo Fernet+Coca" to R.drawable.combo_fernet_coca,
+        "Combo 1882+Coca" to R.drawable.combo_1882_coca,
+        "Combo Gancia+Sprite" to R.drawable.combo_gancia_sprite,
+        "Combo Vodka+Jugo" to R.drawable.combo_smir_jugo,
+        "Combo Vodka+Speed" to R.drawable.combo_smir_speed,
+        "Combo Campari+Jugo" to R.drawable.combo_campari_jugo,
+        "Combo Cosecha+Speed" to R.drawable.combo_cocecha_speed,
+        "Combo Gordons+Tonica" to R.drawable.combo_gordons_tonica,
+        "Combo Balbo+Manaos" to R.drawable.combo_balbo_manaos
+    )
+
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvNombre: TextView = view.findViewById(R.id.tv_producto_nombre)
         val tvPrecio: TextView = view.findViewById(R.id.tv_producto_precio)
@@ -50,30 +75,50 @@ class ProductAdapter(
         return ProductViewHolder(view)
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productos[position]
-        val drawableId = productoImagenMap[product.name] ?: R.drawable.default_placeholder
 
         holder.tvNombre.text = product.name
         holder.tvPrecio.text = "Precio venta: ${holder.formatMoneda(product.priceSale)}"
-        holder.tvStockActual.text = "Stock actual: ${product.stock}"
-        holder.ivImagen.setImageResource(drawableId)
-        holder.tvPrecio.text = "Stock vendido: ${holder.formatMoneda(product.priceSale)}"
-        holder.tvStockActual.text = "Stock actual: ${product.stock}"
-        // Nota: 'Stock vendido' y 'Total vendido' se calcularían con otra tabla (ventas),
-        // pero por ahora, los mostramos como cero.
         holder.tvTotalVendido.text = "Total vendido: ${holder.formatMoneda(0.0)}"
+        val imageKey = product.localImageRoute ?: product.name
+        val drawableId = productoImagenMap[imageKey] ?: R.drawable.default_placeholder
+        holder.ivImagen.setImageResource(drawableId)
 
-        // B. IMAGEN (Necesitarás un mapa similar al de NewProduct.kt aquí)
-            // Por ahora, solo puedes cargar una imagen de placeholder o la que viene de la BD.
-            // Aquí asumirías un mapa de recursos o una ruta local.
+        if (product.isCombo) {
+            holder.tvStockActual.text = "Cargando componentes..."
 
-              holder.btnEliminar.setOnClickListener {
-            // Lógica para eliminar el producto
-            // Acá iría el código para llamar al DAO y eliminar el producto
+            CoroutineScope(Dispatchers.IO).launch {
+                val detalles = db.comboDetailDao().getComboRecipe(product.id).firstOrNull() ?: emptyList()
+
+                val nombresComponentes = detalles.map { detalle ->
+                    val prod = db.productoDao().getProductById(detalle.individualProductId)
+                    if (prod != null) "${detalle.componentQuantity}x ${prod.name}" else "Desconocido"
+                }
+
+                val textoReceta = if (nombresComponentes.isNotEmpty()) {
+                    "Incluye: " + nombresComponentes.joinToString(", ")
+                } else {
+                    "Sin componentes definidos"
+                }
+
+                withContext(Dispatchers.Main) {
+                    holder.tvStockActual.text = textoReceta
+                }
+            }
+
+        } else {
+            // MODO NORMAL: Mostrar Stock
+            holder.tvStockActual.text = "Stock actual: ${product.stock}"
+        }
+
+        // Listeners de botones
+        holder.btnEliminar.setOnClickListener {
+            // Aquí iría tu lógica de eliminar
         }
         holder.btnEditar.setOnClickListener {
-            // Lógica para ir a la pantalla de edición
+            // Aquí iría tu lógica de editar
         }
     }
 

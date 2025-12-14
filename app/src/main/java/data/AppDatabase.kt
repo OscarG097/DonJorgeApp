@@ -4,15 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-// Importar la Entidad Producto (necesaria para @Database)
-import com.bebidas.donjorge.data.Producto
-import com.bebidas.donjorge.data.ProductoDao
+import data.Sales
 
-@Database(entities = [Producto::class], version = 2, exportSchema = false)
+@Database(entities = [Producto::class, Sales::class, ComboDetail::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
-
+    abstract fun salesDao(): SalesDao
+    abstract fun comboDetailDao(): ComboDetailDao
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
