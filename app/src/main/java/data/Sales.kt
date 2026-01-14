@@ -1,10 +1,8 @@
-package data
+package com.bebidas.donjorge.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.bebidas.donjorge.data.Producto
-
 
 @Entity(
     tableName = "sales",
@@ -18,7 +16,6 @@ import com.bebidas.donjorge.data.Producto
 data class Sales(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val productoId: Int,
     val cantidadVendida: Int,
     val precioUnitarioVenta: Double,

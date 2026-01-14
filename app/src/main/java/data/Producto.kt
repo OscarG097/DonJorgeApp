@@ -7,20 +7,13 @@ import androidx.room.PrimaryKey
 data class Producto(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val name: String,
-
     val category: String = "No Asignada",
-
     val costPurchase: Double,
-
     val priceSale: Double,
-
     val stock: Int,
-
     val localImageRoute: String? = null,
-
     val gananciaUnidad: Double = priceSale - costPurchase,
-
-    val isCombo: Boolean = false
+    val isCombo: Boolean = false,
+    val localImagePath: String? = null
 )

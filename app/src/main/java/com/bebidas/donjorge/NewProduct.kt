@@ -30,15 +30,12 @@ class NewProduct : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
 
-    // Vistas de Producto Normal existentes
     private lateinit var spinnerProductBase: Spinner
     private lateinit var etStock: TextInputEditText
     private lateinit var etCostPurchase: TextInputEditText
     private lateinit var etPriceSale: TextInputEditText
     private lateinit var btnSave: Button
     private lateinit var ivImageProduct: ImageView
-
-    // 🟢 Vistas de Combo
     private lateinit var switchEsCombo: Switch
     private lateinit var llNormalProductInputs: LinearLayout
     private lateinit var llComboComponentsContainer: LinearLayout
@@ -92,9 +89,10 @@ class NewProduct : AppCompatActivity() {
         btnSave = findViewById(R.id.btn_save_product)
         ivImageProduct = findViewById(R.id.iv_product_imagen)
 
+        switchEsCombo = findViewById(R.id.switch_es_combo)
+
         tilComboName = findViewById(R.id.til_combo_name)
         etComboName = findViewById(R.id.et_combo_name)
-        switchEsCombo = findViewById(R.id.switch_es_combo)
         ivComboImage = findViewById(R.id.iv_combo_imagen)
         llNormalProductInputs = findViewById(R.id.ll_normal_inputs)
         llComboCreationInputs = findViewById(R.id.ll_combo_creation_inputs)
@@ -102,8 +100,6 @@ class NewProduct : AppCompatActivity() {
         btnAddComponent = findViewById(R.id.btn_add_component)
         llComboInputs = findViewById(R.id.ll_combo_inputs)
         spinnerComboImageBase = findViewById(R.id.spinner_combo_image_base)
-
-
 
         setupSpinners()
         setupInputWatchers()
