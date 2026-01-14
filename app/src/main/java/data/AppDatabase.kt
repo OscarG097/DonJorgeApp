@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import data.Sales
 
-@Database(entities = [Producto::class, Sales::class, ComboDetail::class], version = 4, exportSchema = false)
+@Database(entities = [Producto::class, Sales::class, ComboDetail::class], version = 6, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
     abstract fun salesDao(): SalesDao
     abstract fun comboDetailDao(): ComboDetailDao
+
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -21,7 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "control_bebidas_db"
+                    "don_jorge_database"
                 )
                     .fallbackToDestructiveMigration()
                     .build()

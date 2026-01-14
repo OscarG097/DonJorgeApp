@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 
 import androidx.room.Query
-import data.Sales
 
 import kotlinx.coroutines.flow.Flow
 

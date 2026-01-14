@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DonJorge">
         <activity
+            android:name=".RegistrySaleActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ListProductsActivity"
             android:exported="false" />
         <activity
