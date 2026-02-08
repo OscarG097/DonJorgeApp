@@ -2,6 +2,7 @@ package com.bebidas.donjorge
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,13 +119,17 @@ class ProductAdapter(
             // Aquí iría tu lógica de eliminar
         }
         holder.btnEditar.setOnClickListener {
-            // Aquí iría tu lógica de editar
+            val intent = Intent(context, EditProductActivity::class.java)
+
+            intent.putExtra("PRODUCT_ID", product.id)
+
+            context.startActivity(intent)
         }
     }
 
     override fun getItemCount(): Int = productos.size
 
-    fun actualizarLista(nuevaLista: List<Producto>) {
+    fun refreshList(nuevaLista: List<Producto>) {
         productos = nuevaLista
         notifyDataSetChanged()
     }

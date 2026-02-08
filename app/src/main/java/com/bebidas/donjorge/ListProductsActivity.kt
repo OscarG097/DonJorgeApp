@@ -33,7 +33,7 @@ class ListProductsActivity : AppCompatActivity() {
     private fun observeProducts() {
         lifecycleScope.launch {
             db.productoDao().listAllProduct().collect { listProducts ->
-                productAdapter.actualizarLista(listProducts)
+                productAdapter.refreshList(listProducts)
             }
         }
     }

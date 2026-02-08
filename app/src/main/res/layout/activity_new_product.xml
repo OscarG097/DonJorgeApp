@@ -58,9 +58,7 @@
             android:background="?android:attr/listDivider"
             android:layout_marginBottom="16dp"/>
 
-        <!-- ========================= -->
         <!-- MODO NORMAL (NO COMBO)     -->
-        <!-- ========================= -->
         <LinearLayout
             android:id="@+id/ll_normal_inputs"
             android:layout_width="match_parent"
@@ -123,9 +121,7 @@
 
         </LinearLayout>
 
-        <!-- ========================= -->
         <!-- MODO COMBO                 -->
-        <!-- ========================= -->
         <LinearLayout
             android:id="@+id/ll_combo_inputs"
             android:layout_width="match_parent"
@@ -205,9 +201,7 @@
 
         </LinearLayout>
 
-        <!-- ========================= -->
         <!-- CAMPOS COMUNES (NORMAL/COMBO) -->
-        <!-- ========================= -->
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

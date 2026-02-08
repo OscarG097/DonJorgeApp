@@ -1,5 +1,6 @@
 package com.bebidas.donjorge
 
+import com.bebidas.donjorge.data.Sales
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -152,30 +153,38 @@ class RegistrySaleActivity : AppCompatActivity() {
 
     private fun processSaleAndStock(isCash: Boolean) {
         val cartItems = saleAdapter.getCartItems()
+        val paymentMethodString = if (isCash) "Efectivo" else "Transferencia"
 
         lifecycleScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    cartItems.forEach { (product, amountSale) ->
+                    cartItems.forEach { (producto, cantidadVendida) ->
 
-                        if (product.isCombo) {
-                            val receta = db.comboDetailDao().getDetailsByComboId(product.id)
+                        val nuevaVenta = Sales(
+                            productoId = producto.id,
+                            cantidadVendida = cantidadVendida,
+                            precioUnitarioVenta = producto.priceSale,
+                            paymentMethod = paymentMethodString,
+                            fecha = System.currentTimeMillis()
+                        )
+                        db.salesDao().insertVenta(nuevaVenta)
+
+                        if (producto.isCombo) {
+                            val receta = db.comboDetailDao().getDetailsByComboId(producto.id)
 
                             receta.forEach { detalle ->
                                 val productoIngrediente = db.productoDao().getProductById(detalle.individualProductId)
-
                                 if (productoIngrediente != null) {
-                                    val totalADescontar = detalle.componentQuantity * amountSale
+                                    val totalADescontar = detalle.componentQuantity * cantidadVendida
                                     val nuevoStock = productoIngrediente.stock - totalADescontar
 
                                     val productoActualizado = productoIngrediente.copy(stock = nuevoStock)
                                     db.productoDao().updateProduct(productoActualizado)
                                 }
                             }
-
                         } else {
-                            val nuevoStock = product.stock - amountSale
-                            val productoActualizado = product.copy(stock = nuevoStock)
+                            val nuevoStock = producto.stock - cantidadVendida
+                            val productoActualizado = producto.copy(stock = nuevoStock)
                             db.productoDao().updateProduct(productoActualizado)
                         }
                     }

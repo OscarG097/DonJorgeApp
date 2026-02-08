@@ -19,6 +19,9 @@
             android:name=".ListProductsActivity"
             android:exported="false" />
         <activity
+            android:name=".EditProductActivity"
+            android:exported="false" />
+        <activity
             android:name=".NewProduct"
             android:exported="false"
             android:label="Nuevo Producto"
