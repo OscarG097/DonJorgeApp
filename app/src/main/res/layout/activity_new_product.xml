@@ -1,231 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context=".NewProduct">
+    android:background="?android:attr/colorBackground">
 
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_new_product"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="#212121"
+        app:title="Nuevo Producto"
+        app:titleTextColor="#FFFFFF"
+        app:navigationIcon="@drawable/ic_back_white" />
 
-        <!-- Título -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AGREGAR NUEVO PRODUCTO"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <!-- Switch combo -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:id="@+id/tv_es_combo_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="¿Es un Combo?"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/switch_es_combo"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <Switch
-                android:id="@+id/switch_es_combo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- MODO NORMAL (NO COMBO)     -->
         <LinearLayout
-            android:id="@+id/ll_normal_inputs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_producto_base_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Producto Base"
-                android:textStyle="bold"/>
-
-            <!--                android:entries="@array/products_array"-->
-            <Spinner
-                android:id="@+id/spinner_product_base"
+            <!-- Switch combo -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tv_es_combo_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="¿Es un Combo?"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/switch_es_combo"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <Switch
+                    android:id="@+id/switch_es_combo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
                 android:layout_marginBottom="16dp"/>
 
-            <ImageView
-                android:id="@+id/iv_product_imagen"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="Imagen del producto"
-                android:src="@drawable/default_placeholder" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <!-- MODO NORMAL (NO COMBO)     -->
+            <LinearLayout
+                android:id="@+id/ll_normal_inputs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Cantidad Comprada (Stock)"
-                android:layout_marginBottom="8dp">
+                android:orientation="vertical"
+                android:visibility="visible">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_stock"
+                <TextView
+                    android:id="@+id/tv_producto_base_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Producto Base"
+                    android:textStyle="bold"/>
+
+                <Spinner
+                    android:id="@+id/spinner_product_base"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:minHeight="48dp"
+                    android:layout_marginBottom="16dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_product_imagen"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="16dp"
+                    android:contentDescription="Imagen del producto"
+                    android:src="@drawable/default_placeholder" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cantidad Comprada (Stock)"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_stock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Precio Unitario de Compra (Costo x unidad)"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_cost_purchase"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <!-- MODO COMBO                 -->
+            <LinearLayout
+                android:id="@+id/ll_combo_inputs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_combo_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre Personalizado del Combo"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_combo_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Imagen del Combo (elegí un producto como referencia)"
+                    android:textStyle="bold"/>
+
+                <Spinner
+                    android:id="@+id/spinner_combo_image_base"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/combo_array"
+                    android:minHeight="48dp"
+                    android:layout_marginBottom="16dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_combo_imagen"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="16dp"
+                    android:contentDescription="Imagen del combo"
+                    android:src="@drawable/default_placeholder" />
+
+                <LinearLayout
+                    android:id="@+id/ll_combo_creation_inputs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Productos del Combo (Receta)"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/ll_combo_components_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                    <Button
+                        android:id="@+id/btn_add_component"
+                        style="@style/BotonIngreso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+ Agregar producto"
+                        android:layout_marginTop="16dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- CAMPOS COMUNES (NORMAL/COMBO) -->
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio Unitario de Compra (Costo x unidad)"
-                android:layout_marginBottom="8dp">
+                android:hint="Precio de venta final"
+                android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_cost_purchase"
+                    android:id="@+id/et_price_sale"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-        </LinearLayout>
-
-        <!-- MODO COMBO                 -->
-        <LinearLayout
-            android:id="@+id/ll_combo_inputs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_combo_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <!-- Guardar -->
+            <Button
+                android:id="@+id/btn_save_product"
+                style="@style/BotonIngreso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre Personalizado del Combo"
-                android:layout_marginBottom="16dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_combo_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Imagen del Combo (elegí un producto como referencia)"
-                android:textStyle="bold"/>
-
-            <Spinner
-                android:id="@+id/spinner_combo_image_base"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/combo_array"
-                android:minHeight="48dp"
-                android:layout_marginBottom="16dp"/>
-
-            <ImageView
-                android:id="@+id/iv_combo_imagen"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="Imagen del combo"
-                android:src="@drawable/default_placeholder" />
-
-            <LinearLayout
-                android:id="@+id/ll_combo_creation_inputs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Productos del Combo (Receta)"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
-
-                <LinearLayout
-                    android:id="@+id/ll_combo_components_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"/>
-
-                <Button
-                    android:id="@+id/btn_add_component"
-                    style="@style/BotonIngreso"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="+ Agregar producto"
-                    android:layout_marginTop="16dp"/>
-            </LinearLayout>
+                android:text="Guardar"
+                android:padding="12dp"
+                android:layout_marginTop="16dp"/>
 
         </LinearLayout>
-
-        <!-- CAMPOS COMUNES (NORMAL/COMBO) -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Precio de venta final"
-            android:layout_marginBottom="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_price_sale"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Guardar -->
-        <Button
-            android:id="@+id/btn_save_product"
-            style="@style/BotonIngreso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:padding="12dp"
-            android:layout_marginTop="16dp"/>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

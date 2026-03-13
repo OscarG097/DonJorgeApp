@@ -11,21 +11,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DonJorge">
+        
+        <activity
+            android:name=".SalesReportActivity"
+            android:exported="false"
+            android:label="Reporte de Ventas" />
+        
         <activity
             android:name=".RegistrySaleActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        
         <activity
             android:name=".ListProductsActivity"
             android:exported="false" />
+        
         <activity
             android:name=".EditProductActivity"
             android:exported="false" />
+        
         <activity
             android:name=".NewProduct"
             android:exported="false"
             android:label="Nuevo Producto"
             android:theme="@style/Theme.DonJorge" />
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -33,7 +43,6 @@
             android:theme="@style/Theme.DonJorge">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

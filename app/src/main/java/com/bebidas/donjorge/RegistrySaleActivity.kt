@@ -1,9 +1,9 @@
 package com.bebidas.donjorge
 
-import com.bebidas.donjorge.data.Sales
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bebidas.donjorge.data.AppDatabase
+import com.bebidas.donjorge.data.SaleRequest
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,6 +30,7 @@ class RegistrySaleActivity : AppCompatActivity() {
     private lateinit var tvTotalAmount: TextView
     private lateinit var searchView: SearchView
     private lateinit var btnConfirmSale: android.view.View
+    private lateinit var toolbar: MaterialToolbar
 
     private var currentTotal: Double = 0.0
 
@@ -38,6 +41,7 @@ class RegistrySaleActivity : AppCompatActivity() {
         db = AppDatabase.getDatabase(applicationContext)
 
         initViews()
+        setupToolbar()
         setupRecyclerView()
         loadProducts()
         setupListeners()
@@ -48,6 +52,11 @@ class RegistrySaleActivity : AppCompatActivity() {
         tvTotalAmount = findViewById(R.id.tv_total_amount)
         searchView = findViewById(R.id.search_view_products)
         btnConfirmSale = findViewById(R.id.btn_confirm_sale)
+        toolbar = findViewById(R.id.toolbar_registry)
+    }
+
+    private fun setupToolbar() {
+        toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupRecyclerView() {
@@ -143,10 +152,11 @@ class RegistrySaleActivity : AppCompatActivity() {
             processSaleAndStock(isCash = true)
         }
 
-        btnTransfer.setOnClickListener {
+        val btnTransferListener = View.OnClickListener {
             dialog.dismiss()
             processSaleAndStock(isCash = false)
         }
+        btnTransfer.setOnClickListener(btnTransferListener)
 
         dialog.show()
     }
@@ -155,39 +165,20 @@ class RegistrySaleActivity : AppCompatActivity() {
         val cartItems = saleAdapter.getCartItems()
         val paymentMethodString = if (isCash) "Efectivo" else "Transferencia"
 
+        // Mapeamos los items del carrito a SaleRequest para la transacción atómica
+        val saleRequests = cartItems.map { (producto, cantidad) ->
+            SaleRequest(
+                productId = producto.id,
+                quantity = cantidad,
+                paymentMethod = paymentMethodString
+            )
+        }
+
         lifecycleScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    cartItems.forEach { (producto, cantidadVendida) ->
-
-                        val nuevaVenta = Sales(
-                            productoId = producto.id,
-                            cantidadVendida = cantidadVendida,
-                            precioUnitarioVenta = producto.priceSale,
-                            paymentMethod = paymentMethodString,
-                            fecha = System.currentTimeMillis()
-                        )
-                        db.salesDao().insertVenta(nuevaVenta)
-
-                        if (producto.isCombo) {
-                            val receta = db.comboDetailDao().getDetailsByComboId(producto.id)
-
-                            receta.forEach { detalle ->
-                                val productoIngrediente = db.productoDao().getProductById(detalle.individualProductId)
-                                if (productoIngrediente != null) {
-                                    val totalADescontar = detalle.componentQuantity * cantidadVendida
-                                    val nuevoStock = productoIngrediente.stock - totalADescontar
-
-                                    val productoActualizado = productoIngrediente.copy(stock = nuevoStock)
-                                    db.productoDao().updateProduct(productoActualizado)
-                                }
-                            }
-                        } else {
-                            val nuevoStock = producto.stock - cantidadVendida
-                            val productoActualizado = producto.copy(stock = nuevoStock)
-                            db.productoDao().updateProduct(productoActualizado)
-                        }
-                    }
+                    // LLAMADA ATÓMICA AL DAO
+                    db.productoDao().executeSaleAtomics(saleRequests)
                 }
 
                 withContext(Dispatchers.Main) {

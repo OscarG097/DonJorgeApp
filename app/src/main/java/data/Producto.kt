@@ -15,5 +15,6 @@ data class Producto(
     val localImageRoute: String? = null,
     val gananciaUnidad: Double = priceSale - costPurchase,
     val isCombo: Boolean = false,
-    val localImagePath: String? = null
+    val localImagePath: String? = null,
+    val isDeleted: Boolean = false // Nuevo campo para borrado lógico
 )

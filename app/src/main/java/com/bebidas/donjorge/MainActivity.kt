@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity() {
             R.id.btn_registrar_venta -> {
                 startActivity(Intent(this, RegistrySaleActivity::class.java))
             }
-
+            R.id.btn_ganancias -> {
+                startActivity(Intent(this, SalesReportActivity::class.java))
+            }
             else -> {
                 val nextActivityTitle: String = when (view.id) {
-                    R.id.btn_ganancias -> "Ganancias"
                     R.id.btn_exportar -> "Exportar Datos (CSV)"
                     R.id.btn_reportes -> "Reportes"
                     else -> "Pantalla en Desarrollo"
