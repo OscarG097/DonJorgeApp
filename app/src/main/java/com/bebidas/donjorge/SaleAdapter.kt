@@ -45,6 +45,7 @@ class SaleAdapter(
         "Combo Vodka+Speed" to R.drawable.combo_smir_speed,
         "Combo Campari+Jugo" to R.drawable.combo_campari_jugo,
         "Combo Cosecha+Speed" to R.drawable.combo_cocecha_speed,
+        "Combo Gancia+Sprite" to R.drawable.combo_gancia_sprite,
         "Combo Gordons+Tonica" to R.drawable.combo_gordons_tonica,
         "Combo Balbo+Manaos" to R.drawable.combo_balbo_manaos
     )
@@ -64,7 +65,8 @@ class SaleAdapter(
             val formatter = NumberFormat.getCurrencyInstance(Locale("es", "AR"))
             tvPrice.text = formatter.format(product.priceSale)
 
-            val imageKey = product.localImagePath ?: product.name
+            // CORRECCIÓN: Usar localImageRoute (para combos) o localImagePath o name
+            val imageKey = product.localImageRoute ?: product.localImagePath ?: product.name
             val drawableId = productoImagenMap[imageKey] ?: R.drawable.default_placeholder
             ivThumb.setImageResource(drawableId)
 
@@ -143,7 +145,6 @@ class SaleAdapter(
     }
 
     fun filter(query: String) {
-        // Ya no filtramos por stock aquí, confiamos en la lista original
         displayedProducts = if (query.isEmpty()) {
             allProducts
         } else {
@@ -154,7 +155,7 @@ class SaleAdapter(
 
     fun updateData(newProducts: List<Producto>) {
         allProducts = newProducts
-        displayedProducts = newProducts // Mostramos todo lo que llega
+        displayedProducts = newProducts
         notifyDataSetChanged()
     }
 

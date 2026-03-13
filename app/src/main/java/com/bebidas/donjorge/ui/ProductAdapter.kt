@@ -2,12 +2,14 @@ package com.bebidas.donjorge
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bebidas.donjorge.data.AppDatabase
 import com.bebidas.donjorge.data.Producto
@@ -24,7 +26,6 @@ class ProductAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
-    // Instancia de la BD (Mejor aquí que dentro del ViewHolder)
     private val db = AppDatabase.getDatabase(context)
 
     private val productoImagenMap = mapOf(
@@ -75,7 +76,6 @@ class ProductAdapter(
         return ProductViewHolder(view)
     }
 
-    @SuppressLint("SuspiciousIndentation")
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productos[position]
 
@@ -109,22 +109,56 @@ class ProductAdapter(
             }
 
         } else {
-            // MODO NORMAL: Mostrar Stock
             holder.tvStockActual.text = "Stock actual: ${product.stock}"
         }
 
-        // Listeners de botones
+        // --- Botón ELIMINAR ---
         holder.btnEliminar.setOnClickListener {
-            // Aquí iría tu lógica de eliminar
+            showDeleteConfirmationDialog(product)
         }
+
+        // --- Botón EDITAR ---
         holder.btnEditar.setOnClickListener {
-            // Aquí iría tu lógica de editar
+            val intent = Intent(context, EditProductActivity::class.java)
+            intent.putExtra("PRODUCT_ID", product.id)
+            context.startActivity(intent)
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(product: Producto) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Eliminar Producto")
+        builder.setMessage("¿Estás seguro de que deseas eliminar '${product.name}'? Esto también borrará su historial de ventas y recetas de combos.")
+        
+        builder.setPositiveButton("ELIMINAR") { _, _ ->
+            deleteProduct(product)
+        }
+        
+        builder.setNegativeButton("Cancelar", null)
+        
+        val dialog = builder.create()
+        dialog.show()
+        
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(android.graphics.Color.RED)
+    }
+
+    private fun deleteProduct(product: Producto) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                db.productoDao().logicalDelete(product.id)
+                // No hace falta avisar al adapter manualmente porque ListProductsActivity 
+                // observa un Flow que se disparará automáticamente al cambiar la DB.
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    // Opcional: Mostrar error si falla
+                }
+            }
         }
     }
 
     override fun getItemCount(): Int = productos.size
 
-    fun actualizarLista(nuevaLista: List<Producto>) {
+    fun refreshList(nuevaLista: List<Producto>) {
         productos = nuevaLista
         notifyDataSetChanged()
     }

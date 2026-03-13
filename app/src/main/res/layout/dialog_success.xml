@@ -11,8 +11,7 @@
     <ImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@android:drawable/checkbox_on_background"
-        app:tint="#4CAF50"
+        android:src="@drawable/checkbox_on_background"
         android:layout_marginBottom="16dp"/>
 
     <TextView

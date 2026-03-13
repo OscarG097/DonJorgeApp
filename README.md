@@ -1,80 +1,52 @@
-📔 Control de Stock y Ventas (Bebidas Don Jorge)
+# 📔 Don Jorge - Control de Stock y Ventas
 
-Este es un proyecto de aplicación móvil nativa para Android, desarrollado en Kotlin, diseñado para gestionar el inventario (stock) y registrar las ventas en un local de bebidas. Utiliza una base de datos local para operar sin conexión a Internet.
+Aplicación móvil nativa para Android, desarrollada en **Kotlin**, diseñada para la gestión integral de inventario y registro de ventas en un local de bebidas. La aplicación está optimizada para funcionar de manera **offline** utilizando una base de datos local.
 
-🎯 Objetivo del Proyecto
+---
 
-El objetivo principal es reemplazar los métodos manuales de gestión de inventario y ventas con una herramienta digital eficiente que permita:
+## 🚀 Funcionalidades Principales
 
-    Alta de Productos: Registrar nuevos productos con precios de compra/venta y stock inicial.
+### 1. Gestión de Inventario (Stock)
+- **Alta de Productos:** Registro de nuevos artículos con nombre, stock inicial, costo de compra y precio de venta.
+- **Edición Rápida:** Modificación de datos existentes (precios, cantidades, nombres) desde la lista de productos.
+- **Listado en Tiempo Real:** Visualización completa del stock con actualización automática mediante `Flows`.
 
-    Control de Stock: Mantener el inventario de forma local (offline).
+### 2. Registro de Ventas Avanzado
+- **Carrito de Compras:** Interfaz intuitiva para sumar múltiples productos a una venta.
+- **Buscador Integrado:** Filtro rápido por nombre para agilizar la atención al cliente.
+- **Gestión de Combos:** Lógica inteligente que permite vender "combos" (ej. Fernet + Coca) descontando automáticamente el stock de cada ingrediente individual.
+- **Métodos de Pago:** Soporte para registro de ventas en **Efectivo** y **Transferencia**.
 
-    Registro de Ventas: Interfaz rápida para sumar productos vendidos.
+### 3. Experiencia de Usuario (UX)
+- **Formato de Moneda Automático:** Implementación de `CurrencyTextWatcher` para formatear precios en pesos argentinos ($ 0,00) mientras el usuario escribe.
+- **Validaciones Inteligentes:** El sistema impide vender productos sin stock suficiente y valida que los campos de precio sean correctos.
+- **Interfaz Moderna:** Uso de Material Design, CardViews y Diálogos de confirmación personalizados.
 
-    Generación de Reportes (Pendiente).
+---
 
-💻 Tecnologías Utilizadas
-Componente	Tecnología	Propósito
-Plataforma	Android Nativo	Desarrollo de la aplicación móvil.
-Lenguaje	Kotlin	Lenguaje de programación principal.
-Base de Datos	Room Persistence Library	Base de datos local (SQLite) para stock y ventas.
-Interfaz UI	Material Components & CardView	Diseño moderno tipo mosaico y campos de formulario.
-Asincronía	Coroutines/LifecycleScope	Manejo de operaciones de BD en segundo plano (hilos de fondo).
+## 🛠️ Tecnologías Utilizadas
 
-🏗️ Estructura de la Base de Datos (Room)
+| Componente | Tecnología | Propósito |
+| :--- | :--- | :--- |
+| **Lenguaje** | Kotlin | Desarrollo robusto y moderno. |
+| **Base de Datos** | Room (SQLite) | Persistencia de datos local y segura. |
+| **Asincronía** | Coroutines & Flow | Operaciones fluidas sin bloquear la interfaz. |
+| **Arquitectura** | MVVM (Lite) | Separación de lógica de datos y UI. |
+| **UI** | Material 3 & Jetpack | Componentes visuales modernos y responsivos. |
 
-La aplicación utiliza la base de datos AppDatabase con la siguiente entidad principal:
-Entidad: Producto
+---
 
-Representa un artículo del inventario con todos los datos necesarios para el control de stock y cálculo de ganancia.
-Campo	Tipo de Datos	Propósito
-id	Int	Clave primaria auto-generada.
-nombre	String	Nombre del producto (ej: Coca Cola 2.25Lts).
-categoria	String	Clasificación (ej: Con Alcohol, Sin Alcohol).
-stock	Int	Cantidad actual disponible.
-costoCompra	Double	Precio pagado por unidad.
-precioVenta	Double	Precio de venta al público.
-rutaImagenLocal	String?	Ruta local de la imagen precargada (Opcional).
-Componentes de Datos
+## 🏗️ Estructura de Datos (Room)
 
-    ProductoDao.kt: Interfaz DAO con funciones para insertarProducto, obtenerTodosProductos, y actualizarProducto.
+La base de datos se compone de tres entidades principales:
+- **Producto:** Información base del artículo (Nombre, Stock, Precios).
+- **Sales (Ventas):** Historial de transacciones con fecha, monto y método de pago.
+- **ComboDetail:** Definición de los ingredientes que componen un producto tipo "Combo".
 
-    AppDatabase.kt: Clase Singleton que inicializa la base de datos Room.
+---
 
-🚀 Implementación de Funcionalidades Actuales
-1. Pantalla Principal (MainActivity)
+## 📅 Próximos Pasos
 
-    Layout: Utiliza un GridLayout con CardView para mostrar 6 botones de mosaico (2 columnas).
-
-    Navegación: La función onTileClicked() en MainActivity.kt maneja el clic y usa un Intent para ir a la pantalla correspondiente.
-
-    Botón 'INGRESO': Navega a la actividad NewProduct.
-
-2. Formulario de Ingreso (NewProduct.kt)
-
-    Layout: activity_new_product.xml utiliza TextInputLayout para un formulario moderno y Spinner para selección de categorías y productos base. El botón de guardar utiliza el color temático del mosaico de Ingresos (@color/colorIngreso).
-
-    Lógica de Guardado:
-
-        La función guardarProducto() inicializa la base de datos Room.
-
-        Validaciones: Se realizan validaciones estrictas para asegurar que el usuario:
-
-            Seleccione un producto base.
-
-            No deje campos vacíos.
-
-            Ingrese números válidos (mayores a cero) en Stock, Costo y Venta.
-
-        La inserción en la base de datos se ejecuta en un hilo de fondo (Dispatchers.IO) usando Coroutines para evitar congelar la interfaz de usuario.
-
-📦 Pendientes / Próximos Pasos
-
-    Listado de Productos: Crear la pantalla para ver, editar y eliminar los productos guardados en Room.
-
-    Funcionalidad de Venta: Implementar la interfaz para registrar una venta y descontar el stock automáticamente.
-
-    Cálculo de Ganancias: Mostrar reportes filtrables por día/mes.
-
-    Imágenes: Implementar la lógica para mostrar las imágenes precargadas del producto base.
+- [ ] **Reportes y Estadísticas:** Implementar una pantalla de resumen diario/mensual con cálculos de ganancia neta.
+- [ ] **Alertas de Stock Bajo:** Notificaciones visuales cuando un producto está por agotarse.
+- [ ] **Copia de Seguridad:** Exportación de la base de datos a Excel o Google Drive.
